@@ -1,14 +1,7 @@
 #!/bin/bash
-# Wazuh Docker Copyright (C) 2019 Wazuh Inc. (License GPLv2)
 
-# It will run every .sh script located in entrypoint-scripts folder in lexicographical order
-for script in `ls /entrypoint-scripts/*.sh | sort -n`; do
-  bash "$script"
-
-done
-
-##############################################################################
-# Start Wazuh Server.
-##############################################################################
-
-/sbin/my_init 
+# Configuring and starting Wazuh-Manager, Wazuh-API and Filebeat
+chkconfig --add wazuh-manager && service wazuh-manager start
+sed -i 's|YOUR_ELASTIC_SERVER_IP|'elasticsearch'|g' /etc/filebeat/filebeat.yml
+chkconfig --add filebeat && service filebeat start
+/usr/bin/node /var/ossec/api/app.js > /dev/null 2>&1
