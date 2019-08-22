@@ -6,7 +6,7 @@ set -e
 el_url=${ELASTICSEARCH_URL}
 
 if [ "x${WAZUH_API_URL}" = "x" ]; then
-  wazuh_url="https://wazuh"
+  wazuh_url="http://wazuh"
 else
   wazuh_url="${WAZUH_API_URL}"
 fi
