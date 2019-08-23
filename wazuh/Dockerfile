@@ -14,7 +14,6 @@ RUN yum -y install initscripts && yum clean all
 # Set repositories.
 RUN rpm --import https://packages.wazuh.com/key/GPG-KEY-WAZUH
 
-<<<<<<< HEAD
 RUN echo $'[wazuh_repo]\n\
 gpgcheck=1\n\
 gpgkey=https://packages.wazuh.com/key/GPG-KEY-WAZUH\n\
@@ -23,17 +22,6 @@ name=Wazuh repository\n\
 baseurl=https://packages.wazuh.com/3.x/yum/\n\
 protect=1\n'\
 >> /etc/yum.repos.d/wazuh.repo
-=======
-# Sync calls are due to https://github.com/docker/docker/issues/9547
-RUN chmod 755 /init.bash && \
-   sync && /init.bash && \
-   sync && rm /init.bash && \
-   curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-${FILEBEAT_VERSION}-amd64.deb &&\
-   dpkg -i filebeat-oss-${FILEBEAT_VERSION}-amd64.deb && rm -f filebeat-oss-${FILEBEAT_VERSION}-amd64.deb && \
-   chmod 755 /entrypoint.sh && \
-   chmod 755 /entrypoint-scripts/00-wazuh.sh && \
-   chmod 755 /entrypoint-scripts/01-config_filebeat.sh
->>>>>>> 3.9.4_7.1.1-opendistro-security
 
 RUN yum --enablerepo=updates clean metadata && \
   yum -y update && yum -y install openssl && yum -y install wazuh-manager-${WAZUH_VERSION} -y && \
