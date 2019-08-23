@@ -1,14 +1,14 @@
 # Wazuh Docker Copyright (C) 2019 Wazuh Inc. (License GPLv2)
-FROM docker.elastic.co/kibana/kibana:7.3.0
-ARG ELASTIC_VERSION=7.3.0
-ARG WAZUH_VERSION=3.9.5
+FROM amazon/opendistro-for-elasticsearch-kibana:1.1.0
+ARG ELASTIC_VERSION=7.1.1
+ARG WAZUH_VERSION=3.9.4
 ARG WAZUH_APP_VERSION="${WAZUH_VERSION}_${ELASTIC_VERSION}"
 
 USER root
 
 ADD  https://packages.wazuh.com/wazuhapp/wazuhapp-${WAZUH_APP_VERSION}.zip /tmp
 
-RUN /usr/share/kibana/bin/kibana-plugin install --allow-root file:///tmp/wazuhapp-${WAZUH_APP_VERSION}.zip 
+RUN /usr/share/kibana/bin/kibana-plugin install file:///tmp/wazuhapp-${WAZUH_APP_VERSION}.zip 
 RUN rm -rf /tmp/wazuhapp-${WAZUH_APP_VERSION}.zip
 
 COPY config/entrypoint.sh ./entrypoint.sh
@@ -36,20 +36,11 @@ ENV PATTERN="" \
     WAZUH_VERSION_REPLICAS="" \
     IP_SELECTOR="" \
     IP_IGNORE="" \
-    XPACK_RBAC_ENABLED="" \
     WAZUH_MONITORING_ENABLED="" \
     WAZUH_MONITORING_FREQUENCY="" \
     WAZUH_MONITORING_SHARDS="" \
     WAZUH_MONITORING_REPLICAS="" \
     ADMIN_PRIVILEGES=""
-
-ARG XPACK_CANVAS="true"
-ARG XPACK_LOGS="true"
-ARG XPACK_INFRA="true"
-ARG XPACK_ML="true"
-ARG XPACK_DEVTOOLS="true"
-ARG XPACK_MONITORING="true"
-ARG XPACK_APM="true"
 
 ARG CHANGE_WELCOME="false"
 
@@ -60,12 +51,6 @@ RUN chmod +x ./wazuh_app_config.sh
 COPY --chown=kibana:kibana ./config/kibana_settings.sh ./
 
 RUN chmod +x ./kibana_settings.sh
-
-COPY --chown=kibana:kibana ./config/xpack_config.sh ./
-
-RUN chmod +x ./xpack_config.sh
-
-RUN ./xpack_config.sh
 
 COPY --chown=kibana:kibana ./config/welcome_wazuh.sh ./
 

@@ -3,6 +3,8 @@
 
 elastic_config_file="/usr/share/elasticsearch/config/elasticsearch.yml"
 
+# Disable the Open distro security plugin
+
 remove_single_node_conf(){
   if grep -Fq "discovery.type" $1; then
     sed -i '/discovery.type\: /d' $1 

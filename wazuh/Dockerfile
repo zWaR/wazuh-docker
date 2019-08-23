@@ -1,8 +1,8 @@
 FROM centos:7
 
-ARG FILEBEAT_VERSION=7.3.0
-ARG WAZUH_VERSION=3.9.5-1
-ARG TEMPLATE_VERSION="v3.9.5"
+ARG FILEBEAT_VERSION=7.1.1
+ARG WAZUH_VERSION=3.9.4-1
+ARG TEMPLATE_VERSION="v3.9.4"
 ARG WAZUH_FILEBEAT_MODULE="wazuh-filebeat-0.1.tar.gz"
 
 ENV API_USER="foo" \
@@ -14,6 +14,7 @@ RUN yum -y install initscripts && yum clean all
 # Set repositories.
 RUN rpm --import https://packages.wazuh.com/key/GPG-KEY-WAZUH
 
+<<<<<<< HEAD
 RUN echo $'[wazuh_repo]\n\
 gpgcheck=1\n\
 gpgkey=https://packages.wazuh.com/key/GPG-KEY-WAZUH\n\
@@ -22,6 +23,17 @@ name=Wazuh repository\n\
 baseurl=https://packages.wazuh.com/3.x/yum/\n\
 protect=1\n'\
 >> /etc/yum.repos.d/wazuh.repo
+=======
+# Sync calls are due to https://github.com/docker/docker/issues/9547
+RUN chmod 755 /init.bash && \
+   sync && /init.bash && \
+   sync && rm /init.bash && \
+   curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-${FILEBEAT_VERSION}-amd64.deb &&\
+   dpkg -i filebeat-oss-${FILEBEAT_VERSION}-amd64.deb && rm -f filebeat-oss-${FILEBEAT_VERSION}-amd64.deb && \
+   chmod 755 /entrypoint.sh && \
+   chmod 755 /entrypoint-scripts/00-wazuh.sh && \
+   chmod 755 /entrypoint-scripts/01-config_filebeat.sh
+>>>>>>> 3.9.4_7.1.1-opendistro-security
 
 RUN yum --enablerepo=updates clean metadata && \
   yum -y update && yum -y install openssl && yum -y install wazuh-manager-${WAZUH_VERSION} -y && \
@@ -62,8 +74,13 @@ RUN chown root: /etc/filebeat/filebeat.yml
 # Setting up and running entrypoint scripts
 RUN mkdir /entrypoint-scripts
 
+<<<<<<< HEAD
 COPY config/entrypoint.sh /entrypoint.sh
 COPY config/01-config_filebeat.sh /entrypoint-scripts/01-config_filebeat.sh
+=======
+ADD https://raw.githubusercontent.com/wazuh/wazuh/$TEMPLATE_VERSION/extensions/elasticsearch/7.x/wazuh-template.json /etc/filebeat
+RUN chmod go-w /etc/filebeat/wazuh-template.json
+>>>>>>> 3.9.4_7.1.1-opendistro-security
 
 RUN chmod 755 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
