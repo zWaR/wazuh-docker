@@ -54,7 +54,16 @@ VOLUME ["/var/lib/filebeat"]
 # Services ports
 EXPOSE 55000/tcp 1514/udp 1515/tcp 514/udp 1516/tcp
 
+# Copy filebeat.yml
+COPY config/filebeat.yml /etc/filebeat/
+RUN chmod go-w /etc/filebeat/filebeat.yml
+RUN chown root: /etc/filebeat/filebeat.yml
+
 # Setting up and running entrypoint scripts
+RUN mkdir /entrypoint-scripts
+
 COPY config/entrypoint.sh /entrypoint.sh
+COPY config/01-config_filebeat.sh /entrypoint-scripts/01-config_filebeat.sh
+
 RUN chmod 755 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

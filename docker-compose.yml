@@ -11,6 +11,12 @@ services:
       - "1515:1515"
       - "514:514/udp"
       - "55000:55000"
+    # environment:
+    #   - SSL_CERTIFICATE_AUTHORITIES=/etc/filebeat/CA.PEM
+    #   - SSL_CERTIFICATE=/etc/filebeat/node.pem
+    #   - SSL_KEY=/etc/filebeat/key.pem
+    #   - USERNAME=usertest
+    #   - PASSWORD=passwordtest
 
   elasticsearch:
     build: elasticsearch
