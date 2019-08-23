@@ -62,13 +62,8 @@ RUN chown root: /etc/filebeat/filebeat.yml
 # Setting up and running entrypoint scripts
 RUN mkdir /entrypoint-scripts
 
-<<<<<<< HEAD
 COPY config/entrypoint.sh /entrypoint.sh
 COPY config/01-config_filebeat.sh /entrypoint-scripts/01-config_filebeat.sh
-=======
-ADD https://raw.githubusercontent.com/wazuh/wazuh/$TEMPLATE_VERSION/extensions/elasticsearch/7.x/wazuh-template.json /etc/filebeat
-RUN chmod go-w /etc/filebeat/wazuh-template.json
->>>>>>> 3.9.4_7.1.1-opendistro-security
 
 RUN chmod 755 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
