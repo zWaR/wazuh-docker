@@ -18,7 +18,7 @@ services:
     #   - PASSWORD=passwordtest
 
   elasticsearch:
-    build: elasticsearch
+    image: wazuh/wazuh-elasticsearch:3.9.4_7.1.1-opendistro
     hostname: elasticsearch
     restart: always
     ports:
@@ -35,7 +35,7 @@ services:
     mem_limit: 2g
 
   kibana:
-    build: kibana
+    image: wazuh/wazuh-kibana:3.9.4_7.1.1-opendistro
     hostname: kibana
     restart: always
     depends_on:
@@ -44,7 +44,7 @@ services:
       - elasticsearch:elasticsearch
       - wazuh:wazuh
   nginx:
-    build: nginx
+    build: wazuh/wazuh-nginx:3.9.4_7.1.1-opendistro
     hostname: nginx
     restart: always
     environment:
