@@ -2,7 +2,7 @@ version: '3'
 services:
   wazuh:
     build: wazuh
-    hostname: wazuh-manager
+    hostname: wazuh
     container_name: wazuh
     restart: always
     ports:
@@ -10,21 +10,28 @@ services:
       - "1515:1515"
       - "514:514/udp"
       - "55000:55000"
-    # environment:
-    #   - SSL_CERTIFICATE_AUTHORITIES=/etc/filebeat/CA.PEM
-    #   - SSL_CERTIFICATE=/etc/filebeat/node.pem
-    #   - SSL_KEY=/etc/filebeat/key.pem
-    #   - USERNAME=usertest
-    #   - PASSWORD=passwordtest
+    volumes:
+      - ./node.pem:/etc/filebeat/node.pem
+      - ./root-ca.pem:/etc/filebeat/root-ca.pem
+      - ./node-key.pem:/etc/filebeat/node-key.pem
+    environment:
+      - ELASTICSEARCH_URL=https://elasticsearch:9200
+      - SSL_CERTIFICATE_AUTHORITIES=/etc/filebeat/root-ca.pem
+      - SSL_CERTIFICATE=/etc/filebeat/node.pem
+      - SSL_KEY=/etc/filebeat/node-key.pem
+      - USERNAME=admin
+      - PASSWORD=admin
+    networks:
+      - odfe-net
 
-  odfe-node2:
+  elasticsearch:
     image: amazon/opendistro-for-elasticsearch:1.1.0
-    container_name: odfe-node2
+    hostname: elasticsearch
+    container_name: elasticsearch
     environment:
       - cluster.name=odfe-cluster
-      - node.name=odfe-node2
-      - discovery.seed_hosts=odfe-node1,odfe-node2
-      - cluster.initial_master_nodes=odfe-node1,odfe-node2
+      - node.name=odfe-node1
+      - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -34,20 +41,34 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+    ports:
+      - "9200:9200"
+      - "9600:9600"
     volumes:
-      - odfe-data2:/usr/share/elasticsearch/data
+      - ./custom-elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem
+      - ./node.pem:/usr/share/elasticsearch/config/node.pem
+      - ./node-key.pem:/usr/share/elasticsearch/config/node-key.pem
+      - ./admin.pem:/usr/share/elasticsearch/config/admin.pem
+      - ./admin-key.pem:/usr/share/elasticsearch/config/admin-key.pem
+     
     networks:
       - odfe-net
+     
   kibana:
-    image: amazon/opendistro-for-elasticsearch-kibana:1.1.0
-    container_name: odfe-kibana
+    build: kibana
+    hostname: kibana
+    container_name: kibana
     ports:
-      - 5601:5601
+      - "5601:5601"
     expose:
       - "5601"
+    volumes:
+     - ./custom-kibana.yml:/usr/share/kibana/config/kibana.yml
+     - ./root-ca.pem:/usr/share/kibana/config/root-ca.pem
     environment:
-      ELASTICSEARCH_URL: https://odfe-node1:9200
-      ELASTICSEARCH_HOSTS: https://odfe-node1:9200
+      CURL_PARAMETERS: "--cacert /usr/share/kibana/config/root-ca.pem -u admin:admin -k"
+      ELASTICSEARCH_URL: "https://elasticsearch:9200"
     networks:
       - odfe-net
 
