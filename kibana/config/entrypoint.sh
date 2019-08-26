@@ -7,14 +7,16 @@ set -e
 # Waiting for elasticsearch
 ##############################################################################
 
-if [ "x${ELASTICSEARCH_URL}" = "x" ]; then
-  el_url="http://elasticsearch:9200"
-else
+if [ "x${CURL_PARAMETERS}" != "x" ] && [ "x${ELASTICSEARCH_URL}" != "x" ]; then
+  el_url="${CURL_PARAMETERS} ${ELASTICSEARCH_URL}"
+elif [ "x${ELASTICSEARCH_URL}" != "x" ]; then
   el_url="${ELASTICSEARCH_URL}"
+else
+  el_url="http://elasticsearch:9200"
 fi
 
 until curl -XGET $el_url; do
-  >&2 echo "Elastic is unavailable - sleeping"
+  >&2 echo "Elastic is unavailable - sleeping ${el_url}"
   sleep 5
 done
 
