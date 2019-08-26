@@ -36,3 +36,6 @@ if [ "$PASSWORD" != "" ]; then
   >&2 echo "Customize Elasticsearch ouput IP."
   sed -i 's|#password:|'password:\ \"$PASSWORD\"'|g' /etc/filebeat/filebeat.yml
 fi
+
+chmod go-w /etc/filebeat/filebeat.yml || true
+chown root: /etc/filebeat/filebeat.yml || true

@@ -56,8 +56,6 @@ EXPOSE 55000/tcp 1514/udp 1515/tcp 514/udp 1516/tcp
 
 # Copy filebeat.yml
 COPY config/filebeat.yml /etc/filebeat/
-RUN chmod go-w /etc/filebeat/filebeat.yml
-RUN chown root: /etc/filebeat/filebeat.yml
 
 # Setting up and running entrypoint scripts
 RUN mkdir /entrypoint-scripts
