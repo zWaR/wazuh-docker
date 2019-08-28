@@ -46,22 +46,25 @@ RUN curl -so /etc/filebeat/wazuh-template.json https://raw.githubusercontent.com
 
 RUN curl -s https://packages.wazuh.com/3.x/filebeat/${WAZUH_FILEBEAT_MODULE} | tar -xvz -C /usr/share/filebeat/module
 
-# Setting volumes
-VOLUME ["/var/ossec/data"]
-VOLUME ["/etc/filebeat"]
-VOLUME ["/var/lib/filebeat"]
-
-# Services ports
-EXPOSE 55000/tcp 1514/udp 1515/tcp 514/udp 1516/tcp
-
-# Copy filebeat.yml
-COPY config/filebeat.yml /etc/filebeat/
-
-# Setting up and running entrypoint scripts
+# Adding first run script and entrypoint
+COPY config/data_dirs.env /data_dirs.env
+COPY config/init.bash /init.bash
 RUN mkdir /entrypoint-scripts
-
 COPY config/entrypoint.sh /entrypoint.sh
+COPY config/00-wazuh.sh /entrypoint-scripts/00-wazuh.sh
 COPY config/01-config_filebeat.sh /entrypoint-scripts/01-config_filebeat.sh
 
-RUN chmod 755 /entrypoint.sh
+EXPOSE 55000/tcp 1514/udp 1515/tcp 514/udp 1516/tcp
+
+# Sync calls are due to https://github.com/docker/docker/issues/9547
+RUN chmod 755 /init.bash && \
+   sync && /init.bash && \
+   sync && rm /init.bash && \
+   chmod 755 /entrypoint.sh && \
+   chmod 755 /entrypoint-scripts/00-wazuh.sh && \
+   chmod 755 /entrypoint-scripts/01-config_filebeat.sh
+
+COPY config/filebeat.yml /etc/filebeat/
+RUN chmod go-w /etc/filebeat/filebeat.yml
+
 ENTRYPOINT ["/entrypoint.sh"]
