@@ -11,14 +11,10 @@ services:
       - "514:514/udp"
       - "55000:55000"
     volumes:
-      - ./node.pem:/etc/filebeat/node.pem
       - ./root-ca.pem:/etc/filebeat/root-ca.pem
-      - ./node-key.pem:/etc/filebeat/node-key.pem
     environment:
       - ELASTICSEARCH_URL=https://elasticsearch:9200
       - SSL_CERTIFICATE_AUTHORITIES=/etc/filebeat/root-ca.pem
-      - SSL_CERTIFICATE=/etc/filebeat/node.pem
-      - SSL_KEY=/etc/filebeat/node-key.pem
       - USERNAME=admin
       - PASSWORD=admin
     networks:
