@@ -62,6 +62,8 @@ services:
     volumes:
      - ./custom-kibana.yml:/usr/share/kibana/config/kibana.yml
      - ./root-ca.pem:/usr/share/kibana/config/root-ca.pem
+     - ./node.pem:/usr/share/kibana/config/node.pem
+     - ./node-key.pem:/usr/share/kibana/config/node-key.pem
     environment:
       CURL_PARAMETERS: "--cacert /usr/share/kibana/config/root-ca.pem -u admin:admin -k"
       ELASTICSEARCH_URL: "https://elasticsearch:9200"
