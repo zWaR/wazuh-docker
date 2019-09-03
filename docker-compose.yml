@@ -66,6 +66,7 @@ services:
      - ./node-key2.pem:/usr/share/kibana/config/node-key2.pem
     environment:
       ELASTICSEARCH_URL: "https://elasticsearch:9200"
+      CURL_PARAMETERS: "--cacert /usr/share/kibana/config/root-ca.pem -u admin:admin -k"
     networks:
       - odfe-net
 
