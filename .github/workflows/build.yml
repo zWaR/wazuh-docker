@@ -16,7 +16,7 @@ jobs:
 
       - name: Build :latest
         if: success()
-        run: docker build wazuh/ -t docker.pkg.github.com/manuasir/wazuh:nightly .
+        run: docker build wazuh/ -t docker.pkg.github.com/manuasir/wazuh:nightly
         
       - name: Push to docker hub :nightly
         if: success()
