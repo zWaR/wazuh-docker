@@ -1,12 +1,12 @@
 # Wazuh Docker Copyright (C) 2020 Wazuh Inc. (License GPLv2)
-FROM docker.elastic.co/kibana/kibana:7.9.3
+FROM docker.elastic.co/kibana/kibana:7.10.0
 USER kibana
-ARG ELASTIC_VERSION=7.9.3
-ARG WAZUH_VERSION=4.0.3
+ARG ELASTIC_VERSION=7.10.0
+ARG WAZUH_VERSION=4.0.4
 ARG WAZUH_APP_VERSION="${WAZUH_VERSION}_${ELASTIC_VERSION}"
 
 WORKDIR /usr/share/kibana
-RUN ./bin/kibana-plugin install https://packages.wazuh.com/4.x/ui/kibana/wazuh_kibana-${WAZUH_APP_VERSION}-1.zip
+RUN ./bin/kibana-plugin install https://packages-dev.wazuh.com/pre-release/ui/kibana/wazuh_kibana-${WAZUH_APP_VERSION}-1.zip
 
 ENV PATTERN="" \
     CHECKS_PATTERN="" \
@@ -52,7 +52,7 @@ RUN chmod 755 ./entrypoint.sh
 
 RUN printf "\nserver.defaultRoute: /app/wazuh\n" >> /usr/share/kibana/config/kibana.yml
 
-COPY --chown=kibana:kibana ./config/wazuh.yml /usr/share/kibana/optimize/wazuh/config/wazuh.yml
+COPY --chown=kibana:kibana ./config/wazuh.yml /usr/share/kibana/data/wazuh/config/wazuh.yml
 COPY --chown=kibana:kibana ./config/wazuh_app_config.sh ./
 RUN chmod +x ./wazuh_app_config.sh
 

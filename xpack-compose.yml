@@ -7,8 +7,8 @@ services:
       context: wazuh-odfe/
       args:
         - FILEBEAT_CHANNEL=filebeat
-        - FILEBEAT_VERSION=7.9.3
-    image: wazuh/wazuh:4.0.3_7.9.3_dev
+        - FILEBEAT_VERSION=7.10.0
+    image: wazuh/wazuh:4.0.4_7.10.0_dev
     hostname: wazuh-manager
     restart: always
     ports:
@@ -35,7 +35,7 @@ services:
       - filebeat_var:/var/lib/filebeat
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     hostname: elasticsearch
     restart: always
     ports:
@@ -56,7 +56,7 @@ services:
 
   kibana:
     build: kibana/
-    image: wazuh/wazuh-kibana:4.0.3_7.9.3_dev
+    image: wazuh/wazuh-kibana:4.0.4_7.10.0_dev
     hostname: kibana
     restart: always
     ports:
